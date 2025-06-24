@@ -32,7 +32,6 @@ export class FlightSearchComponent {
     5: true
   };
   protected flights = this.ticketsFacade.flights;
-  protected firstname = 'Mary';
 
   constructor() {
     effect(() => {
@@ -43,12 +42,6 @@ export class FlightSearchComponent {
       this.filter();
       untracked(() => this.search());
     }, { debugName: 'flight search effect' });
-
-    setTimeout(() => {
-      this.firstname = 'Peter';
-      this.cdRef.markForCheck();
-      console.log('Firstname changed to', this.firstname);
-    }, 5_000);
   }
 
   protected search(): void {
