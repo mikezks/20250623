@@ -46,9 +46,6 @@ export class PassengerEditComponent {
         });
       }
     });
-
-    // Throws error for value access, if in error state.
-    effect(() => console.log(this.passengerResource.value()));
   }
 
   protected save(): void {
