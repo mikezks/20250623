@@ -4,22 +4,32 @@ import { computed, inject } from '@angular/core';
 import { FlightFilter } from '../model/flight-filter';
 import { FlightService } from '../data-access/flight.service';
 
+
+export interface BookingState {
+  filter: FlightFilter;
+  basket: Record<number, boolean>;
+  flights: Flight[];
+}
+
+export const initialBookingState: BookingState = {
+  filter: {
+    from: 'Hamburg',
+    to: 'Graz',
+    urgent: false
+  },
+  basket: {
+    3: true,
+    5: true,
+  },
+  flights: []
+};
+
+
 export const BookingStore = signalStore(
   // Provider definition
   { providedIn: 'root' },
   // State
-  withState({
-    filter: {
-      from: 'Hamburg',
-      to: 'Graz',
-      urgent: false
-    },
-    basket: {
-      3: true,
-      5: true,
-    } as Record<number, boolean>,
-    flights: [] as Flight[]
-  }),
+  withState(initialBookingState),
   // Derived State -> Selectors
   withComputed(store => ({
     delayedFlights: computed(
