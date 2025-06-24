@@ -1,4 +1,4 @@
-import { Component, effect, inject, input } from '@angular/core';
+import { Component, effect, inject, input, numberAttribute } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { validatePassengerStatus } from '../../util-validation';
@@ -26,7 +26,7 @@ export class PassengerEditComponent {
     ]]
   });
 
-  protected id = input(0);
+  protected id = input(0, { transform: numberAttribute });
   protected passenger = toSignal(
     toObservable(this.id).pipe(
       switchMap(id => this.passengerService.findById(id))
