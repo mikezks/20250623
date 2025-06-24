@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { Component, computed, effect, signal, untracked } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Flight, injectTicketsFacade } from '../../logic-flight';
 import { FlightCardComponent, FlightFilterComponent } from '../../ui-flight';
@@ -17,6 +17,7 @@ import { FlightCardComponent, FlightFilterComponent } from '../../ui-flight';
 })
 export class FlightSearchComponent {
   private ticketsFacade = injectTicketsFacade();
+  private cdRef = inject(ChangeDetectorRef);
 
   protected filter = signal({
     from: 'London',
@@ -31,6 +32,7 @@ export class FlightSearchComponent {
     5: true
   };
   protected flights = this.ticketsFacade.flights;
+  protected firstname = 'Mary';
 
   constructor() {
     effect(() => {
@@ -41,6 +43,12 @@ export class FlightSearchComponent {
       this.filter();
       untracked(() => this.search());
     }, { debugName: 'flight search effect' });
+
+    setTimeout(() => {
+      this.firstname = 'Peter';
+      this.cdRef.markForCheck();
+      console.log('Firstname changed to', this.firstname);
+    }, 5_000);
   }
 
   protected search(): void {
