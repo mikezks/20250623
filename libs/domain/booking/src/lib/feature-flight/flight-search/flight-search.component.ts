@@ -3,6 +3,8 @@ import { Component, computed, effect, signal, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Flight, injectTicketsFacade } from '../../logic-flight';
 import { FlightCardComponent, FlightFilterComponent } from '../../ui-flight';
+import { ReactiveNode, SIGNAL } from '@angular/core/primitives/signals';
+import { injectSignalsLogger } from '@flight-demo/shared/core';
 
 
 @Component({
@@ -22,10 +24,10 @@ export class FlightSearchComponent {
     from: 'London',
     to: 'New York',
     urgent: false
-  });
+  }, { debugName: 'filter' });
   protected readonly route = computed(
     () => 'From ' + this.filter().from + ' to ' + this.filter().to + '.'
-  );
+  , { debugName: 'route' });
   protected basket: Record<number, boolean> = {
     3: true,
     5: true
@@ -35,13 +37,17 @@ export class FlightSearchComponent {
   constructor() {
     effect(() => {
       console.log(this.route());
-    });
+    }, { debugName: 'route logger effect' });
 
+    // let activeConsumer: ReactiveNode | null;
     // Explicit effect
-    effect(() => {
+    /* activeConsumer =  */effect(() => {
       this.filter();
       untracked(() => this.search());
-    });
+    }, { debugName: 'flight search effect' });
+
+    // console.log(this.route[SIGNAL]);
+    injectSignalsLogger()
   }
 
   protected search(): void {
