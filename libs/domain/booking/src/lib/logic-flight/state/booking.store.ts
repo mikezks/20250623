@@ -5,7 +5,9 @@ import { FlightFilter } from '../model/flight-filter';
 import { FlightService } from '../data-access/flight.service';
 
 export const BookingStore = signalStore(
+  // Provider definition
   { providedIn: 'root' },
+  // State
   withState({
     filter: {
       from: 'Hamburg',
@@ -18,6 +20,7 @@ export const BookingStore = signalStore(
     } as Record<number, boolean>,
     flights: [] as Flight[]
   }),
+  // Derived State -> Selectors
   withComputed(store => ({
     delayedFlights: computed(
       () => store.flights().filter(flight => flight.delayed)
