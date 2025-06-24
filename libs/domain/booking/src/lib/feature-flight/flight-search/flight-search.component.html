@@ -8,7 +8,7 @@
   <div class="card-body">
     <app-flight-filter
       [filter]="store.filter()"
-      (searchTrigger)="search($event)"
+      (searchTrigger)="store.setFilter($event)"
     >
       @if (flights.length) {
         <div class="flight-filter-info">

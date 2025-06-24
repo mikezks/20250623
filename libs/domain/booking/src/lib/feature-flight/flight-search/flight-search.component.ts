@@ -19,11 +19,6 @@ import { FlightCardComponent, FlightFilterComponent } from '../../ui-flight';
 export class FlightSearchComponent {
   protected store = inject(BookingStore);
 
-  protected search(filter: FlightFilter): void {
-    this.store.setFilter(filter);
-    this.store.loadFlights();
-  }
-
   protected delay(flight: Flight): void {
     const oldFlight = flight;
     const oldDate = new Date(oldFlight.date);
