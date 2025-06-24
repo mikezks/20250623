@@ -42,6 +42,7 @@
         }
 
         <p>Status: {{ passengerResource.status() }}</p>
+        <pre>Error: {{ passengerResource.error() | json }}</pre>
 
         <div class="form-group">
           <button

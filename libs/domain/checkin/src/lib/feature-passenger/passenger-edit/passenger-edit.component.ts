@@ -4,11 +4,13 @@ import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { initialPassenger, Passenger } from '../../logic-passenger';
 import { validatePassengerStatus } from '../../util-validation';
+import { JsonPipe } from '@angular/common';
 
 
 @Component({
   selector: 'app-passenger-edit',
   imports: [
+    JsonPipe,
     RouterLink,
     ReactiveFormsModule
   ],
@@ -37,8 +39,16 @@ export class PassengerEditComponent {
         this.editForm.patchValue(
           this.passengerResource.value()
         );
+      } else {
+        this.editForm.patchValue({
+          ...initialPassenger,
+          firstName: 'We are in error state!'
+        });
       }
     });
+
+    // Throws error for value access, if in error state.
+    effect(() => console.log(this.passengerResource.value()));
   }
 
   protected save(): void {
