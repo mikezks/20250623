@@ -1,5 +1,5 @@
 import { DatePipe, NgStyle } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, input, model, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, input, linkedSignal, model, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { injectCdBlink } from '@flight-demo/shared/core';
 import { Flight, initialFlight } from '../../logic-flight';
@@ -15,7 +15,7 @@ import { Flight, initialFlight } from '../../logic-flight';
   template: `
     <div
       class="card"
-      [ngStyle]="{ 'background-color': selected() ? 'rgb(204, 197, 185)' : 'white' }"
+      [ngStyle]="{ 'background-color': selectedState() ? 'rgb(204, 197, 185)' : 'white' }"
     >
       <div class="card-header">
         <h2 class="card-title">{{ item().from }} - {{ item().to }}</h2>
@@ -29,7 +29,12 @@ import { Flight, initialFlight } from '../../logic-flight';
             (click)="toggleSelection()"
             class="btn btn-info btn-sm"
             style="min-width: 85px; margin-right: 5px"
-          >{{ selected() ? "Remove" : "Select" }}</button>
+          >{{ selectedState() ? "Remove" : "Select" }}</button>
+          <button
+            (click)="emitUpdate()"
+            class="btn btn-info btn-sm"
+            style="min-width: 85px; margin-right: 5px"
+          >Update Parent</button>
           <a
             [routerLink]="['../edit', item().id]"
             class="btn btn-success btn-sm"
@@ -51,11 +56,20 @@ export class FlightCardComponent {
   blink = injectCdBlink();
 
   readonly item = input.required<Flight>();
-  readonly selected = model(false);
+  readonly selected = input(false);
+  readonly selectedState = linkedSignal({
+    source: this.selected,
+    computation: source => source
+  });
+  readonly selectedChange = output<boolean>();
   readonly delayTrigger = output<Flight>();
 
   toggleSelection(): void {
-    this.selected.update(curr => !curr);
+    this.selectedState.update(curr => !curr);
+  }
+  
+  emitUpdate(): void {
+    this.selectedChange.emit(this.selectedState());
   }
 
   delay(): void {
