@@ -5,6 +5,14 @@ import { Flight, injectTicketsFacade } from '../../logic-flight';
 import { FlightCardComponent, FlightFilterComponent } from '../../ui-flight';
 
 
+function myBadError(): void {
+  try {
+    throw new Error('Signal crashed! >:()');
+  } catch (error) {
+    console.log('My guarded error', error);
+  }
+}
+
 @Component({
   selector: 'app-flight-search',
   imports: [
@@ -23,9 +31,10 @@ export class FlightSearchComponent {
     to: 'New York',
     urgent: false
   }, { debugName: 'filter' });
-  protected readonly route = computed(
-    () => 'From ' + this.filter().from + ' to ' + this.filter().to + '.'
-  , { debugName: 'route' });
+  protected readonly route = computed(() => {
+    myBadError();
+    return 'From ' + this.filter().from + ' to ' + this.filter().to + '.';
+  }, { debugName: 'route' });
   protected basket: Record<number, boolean> = {
     3: true,
     5: true
