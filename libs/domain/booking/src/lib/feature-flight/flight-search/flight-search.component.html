@@ -8,7 +8,7 @@
   <div class="card-body">
     <app-flight-filter
       [filter]="store.filter()"
-      (searchTrigger)="store.setFilter($event)"
+      (searchTrigger)="flightEvents.flightFilterChanged($event)"
     >
       @if (flights.length) {
         <div class="flight-filter-info">
@@ -16,7 +16,7 @@
         </div>
       }
       @if (flights.length) {
-        <button (click)="store.setFlights([])"
+        <button (click)="flightEvents.flightsResetTriggered()"
           class="btn btn-default flight-filter-button"
         >Reset</button>
       }
@@ -30,8 +30,11 @@
       <app-flight-card
         [item]="flight"
         [selected]="store.basket()[flight.id]"
-        (selectedChange)="store.updateBasket(flight.id, $event)"
-        (delayTrigger)="store.delayFlight($event.id)"
+        (selectedChange)="flightEvents.basketChanged({
+          id: flight.id,
+          selected: $event
+        })"
+        (delayTrigger)="flightEvents.flightDelayTriggered({ id: flight.id })"
       />
     </div>
   }
