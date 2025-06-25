@@ -31,7 +31,7 @@ export class FlightSearchComponent {
     };
 
     this.store.setFlights(
-      this.store.flights().map(
+      this.store.flightEntities().map(
         flight => flight.id === newFlight.id ? newFlight : flight
       )
     );
