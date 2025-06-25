@@ -1,12 +1,13 @@
 import { patchState, signalStore, type, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
-import { setAllEntities, withEntities } from '@ngrx/signals/entities';
+import { entityConfig, setAllEntities, updateEntity, withEntities } from '@ngrx/signals/entities';
 import { Flight } from '../model/flight';
 import { computed, inject } from '@angular/core';
 import { FlightFilter } from '../model/flight-filter';
 import { FlightService } from '../data-access/flight.service';
 import { pipe, switchMap } from 'rxjs';
+import { addDelay } from '../../util-flight/add-delay';
 
 
 export interface BookingState {
@@ -46,12 +47,19 @@ const entityState = {
   ids: [3, 5]
 }
 
+const flightConfig = entityConfig({
+  entity: type<Flight>(),
+  collection: 'flight',
+  // selectId: flight => flight.id
+});
+
+
 export const BookingStore = signalStore(
   // Provider definition
   { providedIn: 'root' },
   // State
   withState(initialBookingState),
-  withEntities({ entity: type<Flight>(), collection: 'flight' }),
+  withEntities(flightConfig),
   // Derived State -> Selectors
   withComputed(store => ({
     delayedFlights: computed(
@@ -62,13 +70,16 @@ export const BookingStore = signalStore(
   withMethods(store => ({
     setFilter: (filter: FlightFilter) => patchState(store, { filter }),
     setFlights: (flights: Flight[]) =>
-      patchState(store, setAllEntities(flights, { collection: 'flight' })),
+      patchState(store, setAllEntities(flights, flightConfig)),
     updateBasket: (id: number, selected: boolean) => patchState(store, state => ({
       basket: {
         ...state.basket,
         [id]: selected
       }
     })),
+    delayFlight: (id: number, addMin = 5) => patchState(store, updateEntity({
+      id, changes: flight => addDelay(flight, addMin)
+    }, flightConfig))
   })),
   // Side-Effects
   withMethods((

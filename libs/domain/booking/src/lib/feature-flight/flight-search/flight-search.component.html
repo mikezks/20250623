@@ -31,7 +31,7 @@
         [item]="flight"
         [selected]="store.basket()[flight.id]"
         (selectedChange)="store.updateBasket(flight.id, $event)"
-        (delayTrigger)="delay($event)"
+        (delayTrigger)="store.delayFlight($event.id)"
       />
     </div>
   }
